@@ -1,7 +1,7 @@
 -- import: fastn
 
--- fastn.package: fastn-community.github.io/business-card-template
-favicon: /-/fastn-community.github.io/business-card-template/favicon.ico
+-- fastn.package: __user_name__.github.io/__repo_name__
+favicon: /-/__user_name__.github.io/__repo_name__/favicon.ico
 
 -- fastn.dependency: fastn-community.github.io/business-card
 
