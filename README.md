@@ -10,7 +10,7 @@ information.
 
 To use this template, follow the steps below:
 
-1. Click on `Use this Template` or go to the following [link](https://github.com/new?template_name=business-card-1-template&template_owner=fastn-community)
+1. Click on `Use this Template` or go to the following [link](https://github.com/new?template_name=business-card-template&template_owner=fastn-community)
 2. Enter the required details to create new repository.
 3. Clone this newly created repository to your local machine.
 4. Open the `fastn` file named `index.ftd` in a text editor.
@@ -23,47 +23,54 @@ The `index.ftd` file contains placeholders that you can replace with your own in
 
 In the section labeled "DOCUMENTATION FOR YOUR CARD COMPONENTS", locate the 
 `docs.home-card` component and check the following placeholders:
-**Note:** These all are auto-filled values during repository creation
+
+**Note:** All these are auto-filled values during repository creation
 
 - `package-name`: Your repository name
 - `package-full-name`: Your GitHub repository's full URL
-- `license-url`: URL to the license of your choice (e.g., MIT License)
+- `license-url`: URL to the license of your choice (e.g., MIT License) (This 
+  is currently commented, you can uncomment it if you want to include license.)
 - `github`: Your GitHub Repository URL
 
 ### 2. Implement Front and Back Components
 
-In the same "DEFINE YOUR CARD COMPONENTS" section, you will find placeholders for implementing the front and back components of your business card.
+In the "DEFINE YOUR CARD COMPONENTS" section, you will find placeholders for implementing the front and back components of your business card.
 
-For the front component (`front`), you need to use the following headers 
-(card details):
+For the both `front` and `back` component, you need to use the following 
+headers (card details):
+
 **Note:** These headers will be used by the users for filling in their 
 information. It's mandatory to use all these headers while creating your 
 component.
 
 - `caption name`: You name (e.g., "John Doe")
 - `string title`: Your job title
-- `string company`: Your company name
+- `string company-name`: Your company name
 - `ftd.image-src logo`: Image asset or Image URL to your company logo
-- `contact-1`: Your primary contact number (Optional for user)
-- `contact-2`: Your secondary contact number (Optional for user)
-- `website-1`: Your email or social media link (Optional for user)
-- `website-2`: Your email or social media link (Optional for user)
-- `location`: Your address
+- `optional string contact-1`: Your primary contact number (Optional for user)
+- `optional string contact-2`: Your secondary contact number (Optional for user)
+- `optional string email`: Your email (Optional for user)
+- `optional string website`: Your email or social media link (Optional for user)
+- `optional string address`: Your address (Optional for user)
+- `optional string company-slogan`: A slogan or tagline for your company 
+  (Optional for user)
 
-For the back component (`back`), you can provide:
+If you want to create a **portrait** mode business card design, you can 
+uncomment the `landscape: false` (line number: 39) in `lib.display-card` 
+component invocation in `index.ftd` file
 
-- `string company`: Your company name
-- `ftd.image-src logo`: Image asset or Image URL to your company logo
+Replace the code present in the line numbers 47 to 52 with actual card's 
+`front` side component implementation/definition.
+Similarly, replace the code present in the line numbers 66 to 71 with actual 
+card's `back` side component implementation/definition.
 
+## Fix the README.md content
 
-Remove the comments (i.e. Replace `/--` with `--`) and replace `;; <YOUR 
-IMPLEMENTATION HERE>` with your actual component implementation/definition 
+Replace the preview image with your template image 
 
-***Important***: After implementing `front` and `back` components in 
-`index.ftd`, uncomment `category` header in 
-- `docs.home-card` (index.ftd)
-- `docs.how-to-use-card` (docs/card.ftd)
-- `docs.how-to-use-card-back` (docs/card-back.ftd)
+- For `front` side: In [`.github/assets/front.png`](.github/assets/front.png)
+- For `back` side: In [`.github/assets/back.png`](.github/assets/back.png) 
+
 
 ## Some other information:
 
@@ -72,7 +79,8 @@ This uses
 
 - `index.ftd`: It is the homepage which shows preview of front and back for 
   your card
-- `docs/card.ftd`: It shows how to use `front` component of card.
-- `docs/card-back.ftd`: It shows how to use `back` component of card,
+- `how-to-use.ftd`: It is page that gives the detail descriptions about each 
+  fields in the card component and how to use your package. It also shows 
+  some variant of this card (like when some fields are present).
 
-The documentation for this template comes from [`business-card-1`](fastn-community.github.io/business-card-1)
+The documentation for this template comes from [`business-card`](fastn-community.github.io/business-card)

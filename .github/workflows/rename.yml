@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   rename-project:
-    if: ${{ github.repository != 'fastn-community/bussiness-card-1-template' && github.run_number == 1 }}
+    if: ${{ github.repository != 'fastn-community/business-card-template' && github.run_number == 1 }}
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +19,8 @@ jobs:
         shell: bash
       - name: Rename the project
         run: |
+          rm README.md
+          mv README1.md README.md
           echo "Using '${{ env.REPOSITORY_NAME }}' and "${{ env.REPOSITORY_OWNER }}" to rename fastn package"
           sed -i -e 's/__user_name__/${{ env.REPOSITORY_OWNER }}/g' -e 's/__repo_name__/${{ env.REPOSITORY_NAME }}/g' FASTN.ftd
           sed -i -e 's/__user_name__/${{ env.REPOSITORY_OWNER }}/g' -e 's/__repo_name__/${{ env.REPOSITORY_NAME }}/g' index.ftd
