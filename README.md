@@ -1,9 +1,11 @@
-# Business Card One Template using `fastn`
+# Business Card Template using `fastn`
 
 This repository provides a prototype to create customizable business card 
 design using the `fastn` language. You can create designs which can be used 
 by users to easily create professional business card by filling in their 
 information.
+
+[![Watch the video](https://img.youtube.com/vi/Rys5CI9KQsg/hqdefault.jpg)](https://youtu.be/Rys5CI9KQsg)
 
 
 ## Getting Started
