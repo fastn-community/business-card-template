@@ -64,12 +64,27 @@ Replace the code present in the line numbers 47 to 52 with actual card's
 Similarly, replace the code present in the line numbers 66 to 71 with actual 
 card's `back` side component implementation/definition.
 
+**Note:** It is **recommended** to create a `component/front.ftd` and 
+`component/back.ftd` files for implementing `front` side and `back` side 
+components respectively.
+
+Also, `assets` for your package is auto-imported, you can use `assets` to 
+add image etc. (Checkout `FASTN.ftd` file).
+
 ## Fix the README.md content
 
 Replace the preview image with your template image 
 
 - For `front` side: In [`.github/assets/front.png`](.github/assets/front.png)
 - For `back` side: In [`.github/assets/back.png`](.github/assets/back.png) 
+
+
+## Publishing your category design on Github page:
+
+Check out [Publishing Static Site On github 
+pages](https://fastn.com/github-pages/) to know more. 
+
+Also add the live site link in **About** section of github repository.
 
 
 ## Some other information:
@@ -84,3 +99,8 @@ This uses
   some variant of this card (like when some fields are present).
 
 The documentation for this template comes from [`business-card`](fastn-community.github.io/business-card)
+
+
+*To know more about `fastn`, visit [`fastn` website](https://fastn.com/). Also 
+you can join our [discord](https://fastn.com/discord/) channel to connect 
+with our team for further guidance.*

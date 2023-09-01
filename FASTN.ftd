@@ -5,6 +5,8 @@ favicon: /-/__user_name__.github.io/__repo_name__/favicon.ico
 
 -- fastn.dependency: fastn-community.github.io/business-card
 
+-- fastn.auto-import: __user_name__.github.io/__repo_name__/assets
+
 
 -- fastn.sitemap:
 
