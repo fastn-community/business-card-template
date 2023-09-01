@@ -3,14 +3,14 @@
 Prism.languages.ftd = {
     'comment': [
         {
-            'pattern': /\/--[\s]*.+/g,
+            'pattern': /\/--\s*([\S\s]*?)(?=\s*--)/g,
             'greedy': true,
             'alias': "section-comment",
         },
         {
             "pattern": /[\s]*\/[\w]+(:).*\n/g,
             "greedy": true,
-            "alias": "header-comment"
+            "alias": "header-comment",
         },
         {
             'pattern': /(;;).*\n/g,
@@ -34,22 +34,69 @@ Prism.languages.ftd = {
         'pattern': /^[ \t\n]*--\s+(.*)(\n(?![ \n\t]*--).*)*/g,
         'inside': {
             // section-identifier
-            'comment': /^[ \t\n]*--\s+/g,
+            'section-identifier': /([ \t\n])*--\s+/g,
             // [section type] <section name>:
             'punctuation': {
                 'pattern': /^(.*):/g,
                 'inside': {
-                    "comment": /:/g,
-                    'tag': /^\b(component|record|end|or-type|import)\b/g,
-                    "function": /^\s*\S+/g,
+                    "semi-colon": /:/g,
+                    'keyword': /^(component|record|end|or-type)/g,
+                    "value-type": /^(integer|boolean|decimal|string)/g,
+                    'type-modifier': {
+                        'pattern': /(\s)+list(?=\s)/g,
+                        'lookbehind': true,
+                    },
+                    "section-name": {
+                        'pattern': /(\s)*.+/g,
+                        'lookbehind': true,
+                    },
                 }
             },
-            // header name
+            // section caption
+            'section-caption': /^.+(?=\n)*/g,
+            // header name: header value
             'regex': {
-                'pattern': /\b(?!--\s+)(.*?)(?=:)/g,
+                'pattern': /(?!--\s*).*[:]\s*(.*)(\n)*/g,
+                'inside': {
+                    // if condition on component
+                    'header-condition': /\s*if\s*:(.)+/g,
+                    // header event
+                    'event': /\s*\$on(.)+\$(?=:)/g,
+                    // header processor
+                    'processor': /\s*\$[^:]+\$(?=:)/g,
+                    // header name => [header-type] <name> [header-condition]
+                    'regex': {
+                        'pattern': /[^:]+(?=:)/g,
+                        'inside': {
+                            // [header-condition]
+                            'header-condition': /if\s*{.+}/g,
+                            // [header-type] <name>
+                            'tag': {
+                                'pattern': /(.)+(?=if)?/g,
+                                'inside': {
+                                    'kernel-type': /^\s*ftd[\S]+/g,
+                                    'header-type': /^(record|caption|body|caption or body|body or caption|integer|boolean|decimal|string)/g,
+                                    'type-modifier': {
+                                        'pattern': /(\s)+list(?=\s)/g,
+                                        'lookbehind': true,
+                                    },
+                                    'header-name': {
+                                        'pattern': /(\s)*(.)+/g,
+                                        'lookbehind': true,
+                                    },
+                                }
+                            }
+                        }
+                    },
+                    // semicolon
+                    "semi-colon": /:/g,
+                    // header value (if any)
+                    'header-value': {
+                        'pattern': /(\s)*(.+)/g,
+                        'lookbehind': true,
+                    }
+                }
             },
-            // header value
-            'deliminator': /^[ ]+(.*)(\n)/g,
         },
     },
 };
@@ -2076,7 +2123,8 @@ class Node2 {
                 staticValue = modifiedText;
             }
             let codeNode = this.#children[0].getNode();
-            codeNode.innerHTML= staticValue;
+            let codeText = fastn_utils.escapeHtmlInCode(staticValue);
+            codeNode.innerHTML= codeText;
             this.#extraData.code = this.#extraData.code ? this.#extraData.code : {};
             fastn_utils.highlightCode(codeNode, this.#extraData.code);
         }  else if (kind === fastn_dom.PropertyKind.CodeShowLineNumber) {
@@ -2154,10 +2202,11 @@ class Node2 {
         } else if (kind === fastn_dom.PropertyKind.StringValue) {
             this.#rawInnerValue = staticValue;
             if (!ssr) {
-                staticValue = fastn_utils.markdown_inline(staticValue);
+                let escapedHtmlValue = fastn_utils.escapeHtmlInMarkdown(staticValue);
+                staticValue = fastn_utils.markdown_inline(escapedHtmlValue);
             }
             this.#node.innerHTML = staticValue;
-        }else {
+        } else {
             throw ("invalid fastn_dom.PropertyKind: " + kind);
         }
     }
@@ -2230,8 +2279,13 @@ class Node2 {
         for (let i = 0; i < this.#mutables.length; i++) {
             this.#mutables[i].unlinkNode(this);
         }
-        this.#node.remove();
-        this.#mutables = null;
+        // Todo: We don't need this condition as after destroying this node
+        //  ConditionalDom reset this.#conditionUI to null or some different
+        //  value. Not sure why this is still needed.
+        if (!fastn_utils.isNull(this.#node)) {
+            this.#node.remove();
+        }
+        this.#mutables = [];
         this.#parent = null;
         this.#node = null;
     }
@@ -2615,6 +2669,7 @@ let fastn_utils = {
      * @returns {string} - The processed string with inline markdown.
      */
     markdown_inline(i) {
+        if (fastn_utils.isNull(i)) return;
         const { space_before, space_after } = fastn_utils.private.spaces(i);
         const o = (() => {
             let g = fastn_utils.private.replace_last_occurrence(marked.parse(i), "<p>", "");
@@ -2634,8 +2689,8 @@ let fastn_utils = {
     },
     nextSibling(node, parent) {
         // For Conditional DOM
-        if (Array.isArray(node)) {
-            node = node[node.length - 1];
+        while (Array.isArray(node)) {
+            node = node[node.length-1];
         }
         if (node.nextSibling) {
           return node.nextSibling;
@@ -2767,7 +2822,31 @@ let fastn_utils = {
 
     flattenArray(arr) {
         return fastn_utils.private.flattenArray([arr]);
-    }
+    },
+
+    escapeHtmlInCode(str) {
+        return str.replace(/[<]/g, "&lt;");
+    },
+
+    escapeHtmlInMarkdown(str) {
+        let result = "";
+        let ch_map = {
+            '<': "&lt;"
+        };
+        // To avoid replacing html characters inside <code> body
+        let backtick_found = false;
+        for (var i = 0; i < str.length; i++) {
+            let current = str[i];
+            if (current === '`') backtick_found = !backtick_found;
+            if (ch_map[current] !== undefined && !backtick_found) {
+                result += ch_map[current];
+            }
+            else {
+                result += current;
+            }
+        }
+        return result;
+    },
 }
 
 
@@ -2882,7 +2961,7 @@ fastn_utils.private = {
             return '_' + text;
         }
         return text;
-    }
+    },
 }
 
 
@@ -3414,7 +3493,10 @@ ftd.post_init = function () {
                 buffer = [];
             }
             lastKeyTime = currentTime;
-            if (event.target.nodeName === "INPUT" || event.target.nodeName === "TEXTAREA") {
+            if ((event.target.nodeName === "INPUT" || event.target.nodeName === "TEXTAREA")
+            && (eventKey !== "ArrowDown" && eventKey !== "ArrowUp" &&
+                    eventKey !== "ArrowRight" && eventKey !== "ArrowLeft")
+             && (event.target.nodeName === "INPUT" && eventKey !== "Enter")) {
                 return;
             }
             buffer.push(eventKey);
