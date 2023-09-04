@@ -12,8 +12,8 @@ information.
 
 To use this template, follow the steps below:
 
-1. Click on `Use this Template` or go to the following [link](https://github.com/new?template_name=__repo_name__&template_owner=fastn-community)
-2. Enter the required details to create new repository.
+1. Click on `Use this Template` or go to the following [link](https://github.com/new?template_name=repo_name&template_owner=fastn-community)
+2. Enter the required details to create new repository (**Note**: repository name should be in kebab case).
 3. Clone this newly created repository to your local machine.
 4. Open the `fastn` file named `index.ftd` in a text editor.
 
